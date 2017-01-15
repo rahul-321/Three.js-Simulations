@@ -1,0 +1,38 @@
+body {
+	margin: 0;
+}
+
+.canvas {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	overflow: hidden;
+	background-color: #000;
+	z-index: 0;
+}
+
+.main {
+	height: 80%;
+	width: 80%;
+	position: absolute;
+	padding: 1%;
+	margin: 0;
+	left: 10%;
+	top: 10%;
+	background-color: #009688;
+	box-shadow: 3px 5px 5px rgba(255,255,255,0.10), 3px 5px 5px rgba(255,255,255,0.12);
+	color: white;
+	z-index: 1;
+	display: inline;
+	word-wrap: break-word;
+}
+
+#head {
+	font-weight: bold;
+	position: relative;
+	display: inline;	
+}
+
+#aboutText {
+	font-size: 20px;
+}

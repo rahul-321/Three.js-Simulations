@@ -1,0 +1,555 @@
+<!doctype html>
+
+<html>
+<head>
+
+
+<STYLE type="text/css">
+        .btn {
+          display: inline-block;
+          border: #2e6da4;
+          border-style: solid;
+          border-width: 2px;
+         
+          border-radius: 6px;
+          background: linear-gradient(#FFFFFF, #995c33);
+          font-weight: bold;
+          color: blue;
+          margin-top: 5px;
+          margin-bottom: 5px;
+          margin-right: 5px;
+          margin-left: 5px;
+          vertical-align: middle;
+        }
+        .btn:hover {
+          background: linear-gradient(#152B40, #152B40);
+          color: white
+        }
+        .btn:focus {
+          background: linear-gradient(#152B40, #152B40);
+          color: white
+        }
+        button:not(.btn):focus {
+          border: 4px solid red;
+        }
+
+
+      #info{
+        float: left;
+        color:#000000;
+        padding: 0.6%;
+        font-size: 128%;
+        z-index:1;
+         height:12%;
+        position:absolute;
+      width:90%;
+        top:5%;
+
+      }
+
+      #hello{
+        float: left;
+        
+        padding: 0.6%;
+        font-size: 128%;
+        z-index:1;
+         height:12%;
+        position:absolute;
+      width:90%;
+        top:80%;
+      }
+
+
+      #stats1{
+        float: left;
+        border: 2px solid black;
+        padding: 0.6%;
+        font-size: 128%;
+        z-index:1;
+         height:14%;
+        position:absolute;
+      width:22%;
+        top:70%;
+        left:53.6%;
+        font-weight: bold;
+        background: linear-gradient(#FFFFFF, #aaccff);
+        opacity:0.75;
+      }
+
+      #stats2{
+        float: left;
+        border: 2px solid black;
+        padding: 0.6%;
+        font-size: 128%;
+        z-index:1;
+         height:14%;
+        position:absolute;
+      width:22%;
+        top:70%;
+        left:20%;
+        font-weight: bold;
+        background: linear-gradient(#FFFFFF, #aaccff);
+        opacity: 0.75;
+      }
+
+
+#developer{
+				float: center;
+				padding: 1%;
+				font-size: 100%;
+				margin-left:11%;
+				margin-top:0%;
+				z-index:1;
+				position:absolute;
+			}
+
+
+
+      
+			#logo{
+				float: left;
+				margin-left:0%;
+				margin-top:0%;
+				z-index:1;
+				position:absolute;
+			}
+
+
+
+			#htp{
+				float: left;
+				left:91%;
+				top:87%;
+				z-index:1;
+				font-weight: bold;
+				position:absolute;
+			}
+			
+
+
+
+
+      </STYLE>
+
+</head>
+<body  onload="getValues();getStart();" style="overflow:hidden;margin:0;padding:0;">
+
+
+<div  id="info" >
+
+ANGLE:<input type="number" class="btn" name="angle" min="0" max="90" step="1" value="0" id="angle">  SPEED: <input type="number" class="btn" name="speed" min="0" max="50" step="1" value="0" id="speed"> MASS:<input class="btn" type="number" name="mass" min="0" max="100" step="10" value="50" id="mass"> GRAVITY:<input class="btn" type="number" name="GRAVITY" min="1" max="20" step="1" value="10" id="g">
+
+</div>
+
+<div id="hello">	    
+  <input id = "play" class="btn" type = "button" value = "SIMULATE" style="height:40px;width:90px"  onclick="getValues()"/>
+  
+</div>
+
+</body>
+
+<script src="js/three.js"></script>
+<script src="js/dat.gui.min.js"></script>
+<script type="text/javascript" src="js/OrbitControls.js"></script>
+<script src="js/TrackballControls.js"></script>
+<script src="js/threex.keyboardstate.js"></script>
+<script type = "text/javascript" src = "js/ajax.js"></script>
+<script type = "text/javascript" language = "javascript"></script>
+   
+
+
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/jquery-ui.js"></script>
+<link rel=stylesheet href="css/jquery-ui.css" />
+<link rel=stylesheet href="css/info.css"/>
+<script src="js/info.js"></script>
+<div id="infoButton"></div>
+<div id="infoBox" title="Demo Information">
+Set values of angle, speed, mass and gravity , then press SIMULATE to perform the experiment. <br>
+Parameters cannot be changed when the demo is running.<br>
+Use mouse scroll or trackpad to zoom in or zoom out. <br>
+Click and hold the left button of the mouse and move the cursor to change the direction of view.<br>
+Zoom in and out for better view on mobiles and tablets.
+</div>
+
+<div id="logo"><img src="img/logo.png" height=42 width=150></div>
+<div id="developer"> Developer: RAHUL KHANDELWAL | Title: PROJECTILE MOTION	</div>
+
+<div id="stats1" >
+
+Range = 0 m <BR>
+Maximum height = 0 m <BR>
+Time of flight = 0 s <br>
+Angle of projection = 0 
+</div>
+
+<div id="stats2" >
+
+Velocity in X = 0 m/s <BR>
+Velocity in Y = 0 m/s <BR>
+Accelaration in X = 0 m/s <sup>2</sup> <br>
+Accelaration in Y = 0 m/s <sup>2</sup> 
+
+</div>
+
+
+<script>   
+
+		var i=0;
+		var question=0;
+
+   
+
+
+
+     function foo(button)
+     {
+        var x=0;
+        submit=button;
+        if(submit.value=="PLAY")
+           x+=1;
+     }
+
+
+
+     function getStart()
+     {
+     	document.getElementById("infoButton").click();
+     }
+
+
+
+    
+
+	
+	var scene= new THREE.Scene();
+	var camera= new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,10000);
+
+
+	var renderer=new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth,window.innerHeight);
+	renderer.setClearColor(0xffffff);
+//	var container = document.getElementById("container");
+//	container.appendChild(renderer.domElement);
+	
+	
+     function onWindowResize(){
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+    }
+
+     window.addEventListener( 'resize', onWindowResize, false );
+
+
+
+
+	plane = new THREE.Mesh(
+		new THREE.PlaneBufferGeometry( 1000,1000 ),
+		new THREE.MeshBasicMaterial( { visible: false} )
+	);
+	scene.add( plane );
+
+	var cmaterial = new THREE.MeshBasicMaterial({color: 0x555555});
+	var cradius = 5;
+	var csegments = 36; 
+	var circleGeometry = new THREE.CircleGeometry( cradius, csegments );              
+	var circle = new THREE.Mesh( circleGeometry, cmaterial );
+	circle.position.x=000000;
+	circle.position.y=0;
+	circle.rotation.x=-3.142*0.5;
+	//scene.add(circle);
+
+
+	var maxRange= 2500/ 10;
+	var offset=-maxRange/2;
+
+	var scalegeometry= new THREE.BoxGeometry(maxRange,5,1);
+	var scalematerial=new THREE.MeshBasicMaterial({color:0xccccff});
+	var scale= new THREE.Mesh(scalegeometry,scalematerial);
+
+
+
+	
+	scale.position.x=0;
+	scale.position.z=-10;
+	scale.position.y=1;
+	//scene.add(scale);
+
+
+	var grid= new THREE.GridHelper(300,5);
+	var color=new THREE.Color("rgb(255,255,255)");
+	grid.setColors(color,0x00ff00);
+	//scene.add(grid);
+	grid.position.y=-1;
+	
+
+	
+
+	renderer.setClearColor( 0x778899);
+
+	camera.position.y=60;
+	camera.position.z=225;
+	camera.position.x=0;//maxRange/2+offset;
+	
+	var flag=0
+	var theta;
+	var velocity;
+	var gravity;
+	var i=0,j=1;
+
+	var loader = new THREE.TextureLoader();
+				var groundTexture = loader.load( 'img/grasslight-big.jpg' );
+				groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+				groundTexture.repeat.set( 25, 25 );
+				groundTexture.anisotropy = 16;
+				var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: groundTexture } );
+				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 3000, 3000 ), groundMaterial );
+				mesh.rotation.x = - Math.PI / 2;
+				mesh.receiveShadow = true;
+				scene.add( mesh );
+				mesh.position.y=-4;
+
+var light = new THREE.AmbientLight( 0xffffff ); // soft white light
+scene.add( light );
+
+//light.intensity = ;
+
+	var n;
+	var prev=0,current=-maxRange/2;
+
+
+	for(n=0;n<25;n++)
+	{
+		var material = new THREE.LineBasicMaterial({
+						color: 0x0000ff
+						});
+
+
+		 current+=10;
+
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(
+		new THREE.Vector3( current, -1.1, -9 ),
+		new THREE.Vector3( current, 4, -9 )
+		//new THREE.Vector3( 10, 0, 0 )
+		);
+
+		prev=current;
+
+		var line = new THREE.Line( geometry, material );
+		//scene.add( line );
+		//line.position.y=2;
+	}
+
+
+
+	var cpx,cpy;
+
+
+
+
+
+
+
+	function stimulate(i,j,k)
+{
+	
+	
+	var done=0;
+	var angle=(theta)*3.142/180;
+	var v=velocity;
+	var g=gravity;
+	var T= ((2*v)/g*(Math.sin(angle)));
+	var t=0;
+	var increment=T/300;
+	var hmax=v*v*Math.sin(angle)*Math.sin(angle)/(2*g);
+	var range= v*v*Math.sin(2*angle) / g;
+   
+    var geometry = new THREE.SphereGeometry(4,50,50);
+	var material= new THREE.MeshBasicMaterial({color:0xff471a});
+	var cube= new THREE.Mesh(geometry,material); 
+	
+	cube.position.x=offset;
+	cube.position.y=0;
+	cube.position.z=0;
+	scene.add(cube);
+
+
+	
+
+
+
+
+	
+
+	function calx(t)
+	{
+		return (v*t*Math.cos(angle)+offset);
+	}
+
+	function caly(t)
+	{
+		return ((v*t*Math.sin(angle))-((0.5*g*t*t)));
+	}
+
+		var curve = new THREE.QuadraticBezierCurve(
+		new THREE.Vector3( offset, 0, 0 ),
+		new THREE.Vector3( (range/2)+offset, hmax*2, 0 ),
+		new THREE.Vector3( range+offset, 0, 0 )
+	);
+
+	var path = new THREE.Path( curve.getPoints( 50 ) );
+	var geometry = path.createPointsGeometry( 50 );
+	var material = new THREE.LineBasicMaterial( { color : 0x000000 } );	
+	var curveObject = new THREE.Line( geometry, material );
+	scene.add(curveObject);
+	
+	var controls = new THREE.OrbitControls(camera,renderer.domElement);
+		controls.addEventListener('change',render);
+
+
+				var id;
+
+				var vx,vy,ax,ay;
+
+				vy=ay=vx=ax=0;
+
+				var object1=document.getElementById("stats1");
+				var object2=document.getElementById("stats2");
+
+
+	var render=function()
+	{	
+
+			
+			requestAnimationFrame(render);
+			renderer.render(scene,camera);
+			
+
+
+			if(i==1)
+			{
+				t+=2*increment;
+				if(t<=T)
+				{
+				cube.position.x=calx(t);
+				cube.position.y=caly(t);
+				vy= v*Math.sin(angle)*t - 0.5*g*t*t;
+				}
+
+				
+
+			}
+
+
+			object1.innerHTML= "Range = " + (Math.round(range*100)/100).toFixed(2) + " m" + "<br>" +
+
+								"Maximum height = " +  (Math.round(hmax*100)/100).toFixed(2) + " m" + "<br>" +
+
+								"Time of flight = " +  (Math.round(T*100)/100).toFixed(2) + " s" + "<br>" +
+
+
+								"Angle of projection = " +  (Math.round(theta*100)/100) + "&deg;" + "<br>" ;	
+
+			
+								if(t<T)
+								{
+
+									object2.innerHTML= "Velocity in X = " + (Math.round(v*Math.cos(angle)*100)/100).toFixed(2) + " m/s" + "<br>" +
+														"Velocity in Y = " + (Math.round(vy*100)/100).toFixed(2) + " m/s" + "<br>" +
+														"Acceleration in X = " + 0 + " m/s" + "<sup>"+"2"+"</sup>" + "<br>" +
+														"Acceleration in Y = " + gravity + " m/s" + "<sup>"+"2"+"</sup>" ; 
+
+
+								}
+
+								if(t>=T)
+								{
+
+									object2.innerHTML= "Velocity in X = " + 0.00 + " m/s" + "<br>" +
+														"Velocity in Y = " + 0.00 + " m/s" + "<br>" +
+														"Acceleration in X = " + 0 + " m/s" + "<sup>"+"2"+"</sup>" + "<br>" +
+														"Acceleration in Y = " + 0 + " m/s" + "<sup>"+"2"+"</sup>" ; 
+
+
+								}
+
+
+		
+
+	}
+
+	render();
+
+
+}
+
+
+
+
+
+	
+var count=0;
+var submit;
+
+
+
+
+
+function getValues(button)
+{   
+	submit=button;
+	var k;
+	
+	document.getElementById("play").blur();
+
+	var mass=(document.getElementById("mass").value);	
+	document.body.appendChild(renderer.domElement);
+	theta=(document.getElementById("angle").value);
+    velocity=(document.getElementById("speed").value);
+    gravity=(document.getElementById("g").value);
+    
+
+
+   			k=1000000;
+   			count+=1;
+   			i=1;
+   			if(gravity>0&&mass>0)
+   			stimulate(i,j,k);
+   			else {	
+   					if(gravity==0)
+   					alert("Acceleration due to gravity canot be 0 for projectile motion!");
+
+   					else if(gravity<0)
+   						alert("Please enter a positive value g !");
+
+   					else if(mass==0)
+   						alert("Practical mass of a body canot be 0 for projectile motion!");
+
+   					else
+   						alert("Please enter a positive value mass !");
+
+   				}
+
+
+}
+
+
+
+
+
+function getValue(button)
+{
+	//getValues(button);
+}
+
+</script>
+
+  
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+Three.js-Simulations
+
+This repository contains interactive and self assessment simulations for some basic physics concepts designed using Three.js. These simulations were created as an internship project at Indian Institute of Technology,Bombay under the guidance of Professor Deepak Phatak in the summer of 2016 and are meant to be part of Virtual Physics Laboratory(e3 store) developed at IIT B. The simulations are required to be run on WampServer.
